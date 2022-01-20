@@ -4,46 +4,63 @@ import java.security.SecureRandom;
 
 public class Program {
 
-	public static void main(String[] args) {
+	private static final SecureRandom randomNumbers = new SecureRandom();
 
-		SecureRandom rn = new SecureRandom();
-
-		int frenquency1 = 0;
-		int frenquency2 = 0;
-		int frenquency3 = 0;
-		int frenquency4 = 0;
-		int frenquency5 = 0;
-		int frenquency6 = 0;
-
-		for (int i = 1; i < 6000000; i++) {
-			int face = 1 + rn.nextInt(6);
-
-			switch (face) {
-			case 1:
-				++frenquency1;
-				break;
-			case 2:
-				++frenquency2;
-				break;
-			case 3:
-				++frenquency3;
-				break;
-			case 4:
-				++frenquency4;
-				break;
-			case 5:
-				++frenquency5;
-				break;
-			case 6:
-				++frenquency6;
-				break;
-			}
-		}
-		
-		System.out.println("Face\tFrequency");
-		System.out.printf("1\t%d%n2\t%d%n3\t%d%n4\t%d%n5\t%d%n6\t%d%n", frenquency1, 
-				frenquency2, frenquency3, frenquency4, frenquency5, frenquency6);
-
+	private enum Status {
+		CONTINUE, WON, LOST
 	}
 
+	private static final int SNAKE_EYES = 2;
+	private static final int TREY = 3;
+	private static final int SEVEN = 7;
+	private static final int YO_LEVEN = 11;
+	private static final int BOX_CARS = 12;
+
+	public static void main(String[] args) {
+
+		int myPoint = 0;
+		Status gameStatus;
+
+		int sumOfDice = rollDice();
+
+		switch (sumOfDice) {
+
+		case SEVEN:
+		case YO_LEVEN:
+			gameStatus = Status.WON;
+			break;
+		case SNAKE_EYES:
+		case TREY:
+		case BOX_CARS:
+			gameStatus = Status.LOST;
+			break;
+		default:
+			gameStatus = Status.CONTINUE;
+			myPoint = sumOfDice;
+			System.out.printf("Point is %d%n", myPoint);
+			break;
+		}
+
+		while (gameStatus == Status.CONTINUE) {
+			sumOfDice = rollDice();
+			if (sumOfDice == myPoint)
+				gameStatus = Status.WON;
+			else if (sumOfDice == SEVEN)
+				gameStatus = Status.LOST;
+		}
+		
+		if ( gameStatus == Status.WON)
+			System.out.println("Player wins");
+		else
+			System.out.println("Player loses");
+	}
+
+	public static int rollDice() {
+		int diel1 = 1 + randomNumbers.nextInt(6);
+		int diel2 = 1 + randomNumbers.nextInt(6);
+
+		System.out.printf("Player rolled %d + %d = %d%n", diel1, diel2, (diel1 + diel2));
+
+		return diel1 + diel2;
+	}
 }
